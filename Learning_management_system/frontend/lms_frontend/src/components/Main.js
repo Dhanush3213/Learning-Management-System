@@ -19,7 +19,12 @@ import TeacherDashboard from './Teacher/TeacherDashboard'
 import TeacherMyCourses from './Teacher/TeacherMyCourses'
 import TeacherProfileSetting from './Teacher/TeacherProfileSetting'
 import TeacherAddCourses from './Teacher/TeacherAddCourses'
+import EditCourse from './Teacher/EditCourse'
+
 import TeacherChangePassword from './Teacher/TeacherChangePassword'
+
+import AllChapters from './Teacher/CourseChapters'
+import EditChapter from './Teacher/EditChapter' 
 
 import MyUsers from './Teacher/MyUsers'
 import TeacherDetail from './Teacher/TeacherDetail'
@@ -28,6 +33,8 @@ import PopularCourses from './PopularCourses'
 import TeacherCourses from './TeacherCourses'
 import CategoryCourses from './CategoryCourses'
 import TeacherLogout from './Teacher/TeacherLogout'
+import AddChapters from './Teacher/AddChapers'
+import TeacherSkillCourses from './TeacherSkillCourses'
 export default function Main() {
   return (
     <div>
@@ -51,6 +58,8 @@ export default function Main() {
             <Route path="/teacher-profile-setting" element={<TeacherProfileSetting/>}/>
             <Route path="/teacher-change-password" element={<TeacherChangePassword/>}/>
             <Route path="/teacher-add-courses" element={<TeacherAddCourses/>}/>
+            <Route path="/edit-course/:course_id" element={<EditCourse/>}/>
+
             <Route path="/My-Users" element={<MyUsers/>}/>
             <Route path="/teacher-details/:teacher_id" element={<TeacherDetail/>}/>
             <Route path="/all-courses" element={<AllCourses/>}/>
@@ -58,6 +67,16 @@ export default function Main() {
             <Route path="/teacher-courses" element={<TeacherCourses/>}/>
             <Route path="/category/:category_slug" element={<CategoryCourses/>}/>
             <Route path="/teacher-logout" element={<TeacherLogout/>}/>
+            <Route path="/add-chapters/:course_id" element={<AddChapters/>}/>
+
+            <Route path="/all-chapters/:course_id" element={<AllChapters/>}/>
+            <Route path="/edit-chapter/:chapter_id" element={<EditChapter/>}/>
+            <Route path="/teacher-skill-courses/:skill_name/:teacher_id" element={<TeacherSkillCourses/>}/>
+
+
+
+
+
 
           </Routes>
 

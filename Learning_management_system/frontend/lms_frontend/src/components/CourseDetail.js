@@ -1,18 +1,56 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import {useState,useEffect} from 'react';
+const siteURL="http://127.0.0.1:8000/";
+
+const baseUrl="http://127.0.0.1:8000/api";
 export default function CourseDetail() {
+  const [courseData,setcourseData]=useState([]);
+  const [chapterData,setchapterData]=useState([]);
+  const [teacherData,setteacherData]=useState([]);
+  const [relatedcourseData,setrelatedcourseData]=useState([]);
+  const [techListData,settechListData]=useState([]);
+
+
+
+
     let {course_id}=useParams();
+    useEffect(() => {
+      try {
+        axios.get(`${baseUrl}/course/${course_id}`).then((response) => {
+          
+          setcourseData(response.data);
+          setchapterData(response.data.course_chapters);
+          setteacherData(response.data.teacher);
+          setrelatedcourseData(JSON.parse(response.data.related_videos));
+          settechListData(response.data.tech_list);
+
+
+
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }, []);
+    console.log(techListData);
   return (
     <div className='container mt-3'>
         <div className='row'>
             <div className='col-4'>
-            <img src="/logo512.png" className="img-thumbnail" alt="..."/>
+            <img src={courseData.featured_img} className="img-thumbnail" alt={courseData.title} />
             </div>
             <div className='col-8'>
-                <h3>Course Title</h3>
-                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-           <p className='fw-bold'>Course By:<Link to="/teacher-details/1">Teacher details</Link></p>
+                <h3>{courseData.title}</h3>
+                <p>{courseData.description}</p>
+           <p className='fw-bold'>Course By:<Link to={`/teacher-details/${teacherData.id}`}>{teacherData.full_name}</Link></p>
+           <p className='fw-bold'>Technologies:
+           {techListData.map((tech,index)=>
+          <Link to={`/category/${tech.trim()}`}> <span key={index} className=' badge bg-warning ms-2'>{tech}</span></Link>
+           )}
+          </p>
+
            <p className='fw-bold'>Duration:<a href="#">3 hour 30 Minutes</a></p>
            <p className='fw-bold'>Total Enrolled: 456 Students</p>
            <p className='fw-bold'>Rating:<a href="#">4/5</a></p>
@@ -23,10 +61,11 @@ export default function CourseDetail() {
         <div className='card'>
         <div className="card">
   <div className="card-header">
-    <h3>Course Videos</h3>
-  </div>
+    <h3>In this Course</h3>
+  </div> 
   <ul className="list-group list-group-flush">
-    <li className="list-group-item">Introduction 
+    {chapterData.map((chapter,index)=>
+    <li className="list-group-item">{chapter.title} 
             <span className='float-end'>
                     <span className='me-4'>1 hour 30 Minutes</span>
                     <button className='btn btn-sm btn-danger float-end'data-bs-toggle="modal" data-bs-target="#videoModal"><i className="bi bi-play-fill"></i>Play</button>
@@ -42,7 +81,7 @@ export default function CourseDetail() {
       </div>
       <div className="modal-body">
       <div className="ratio ratio-16x9">
-  <iframe src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video" allowfullscreen></iframe>
+  <iframe src={chapter.video}  title={chapter.title}  allowfullscreen></iframe>
 </div>
       </div>
     
@@ -52,28 +91,18 @@ export default function CourseDetail() {
 
 
     </li>
-    <li className="list-group-item">Introduction 
-            <span className='float-end'>
-                    <span className='me-4'>1 hour 30 Minutes</span>
-                    <button className='btn btn-sm btn-danger float-end'><i className="bi bi-play-fill"></i>Play</button>
-            </span>
-    </li>
-    <li className="list-group-item">Introduction 
-            <span className='float-end'>
-                    <span className='me-4'>1 hour 30 Minutes</span>
-                    <button className='btn btn-sm btn-danger float-end'><i className="bi bi-play-fill"></i>Play</button>
-            </span>
-    </li>
+)}
   </ul>
 </div>
         </div>
         <h3 className='pb-1 mb-4 mt-4'>Related Courses<a className='float-end'>See All</a></h3>
     <div className="row mb-4">
+      {relatedcourseData.map((rcourse,index)=>  
         <div className="col-md-3">
             <div className="card" >
-            <Link to="/detail/1"> <img src="/logo512.png" className="card-img-top" alt="..."/></Link>
+            <Link target="_blank"   to={`/detail/${rcourse.pk}`}> <img src={`${siteURL}media/${rcourse.fields.featured_img}`} className="card-img-top" alt={rcourse.fields.title}/></Link>
             <div className="card-body">
-          <h5 className="card-title"><Link to="/detail/1">Course title</Link></h5>
+          <h5 className="card-title"><Link target="_blank" to={`/detail/${rcourse.pk}`}>{rcourse.fields.title}</Link></h5>
               
             </div>
             <div className='card-footer'>
@@ -84,33 +113,7 @@ export default function CourseDetail() {
                     </div>
             </div>
         </div>
-        <div className="col-md-3">
-            <div className="card" >
-            <a href="#" > <img src="/logo512.png" className="card-img-top" alt="..."/></a>
-            <div className="card-body">
-            <a href="#" ><h5 className="card-title">Card title</h5></a>
-              
-            </div>
-            </div>
-        </div>
-        <div className="col-md-3">
-            <div className="card" >
-            <a href="#" > <img src="/logo512.png" className="card-img-top" alt="..."/></a>
-            <div className="card-body">
-            <a href="#" ><h5 className="card-title">Card title</h5></a>
-              
-            </div>
-            </div>
-        </div>
-        <div className="col-md-3">
-            <div className="card" >
-            <a href="#" > <img src="/logo512.png" className="card-img-top" alt="..."/></a>
-            <div className="card-body">
-            <a href="#" ><h5 className="card-title">Card title</h5></a>
-              
-            </div>
-            </div>
-        </div>
+ )}
     </div>
     </div>
   )

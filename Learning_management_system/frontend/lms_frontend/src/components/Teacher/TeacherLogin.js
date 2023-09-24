@@ -10,7 +10,7 @@ export default function TeacherLogin() {
             password:""
         }
     );
-
+const [errorMsg,seterrorMsg] = useState('');
     const handleChange = (event) => {
         setTeacherLoginData({
             ...TeacherLoginData,
@@ -30,7 +30,11 @@ export default function TeacherLogin() {
             axios.post(`${baseUrl}/teacher-login/`,TeacherFormData).then((response)=>{
                 if(response.data.bool===true) {
                     localStorage.setItem('teacherLoginStatus',true);
+                    localStorage.setItem('teacherId',response.data.teacher_id);
+
                     window.location.href='/teacher-dashboard';
+                }else{
+                    seterrorMsg("Invalid Email or Password")
                 }
             });
         }catch(e){
@@ -50,6 +54,7 @@ export default function TeacherLogin() {
             <div className='card'>
                 <div className='card-header'>Login</div>
                 <div className='card-body'>
+                    {errorMsg && <p className='text-danger'>{errorMsg}</p>}
                 <form>
                 <div className="form-group">
                     <label for="exampleInputEmail1">Email</label>

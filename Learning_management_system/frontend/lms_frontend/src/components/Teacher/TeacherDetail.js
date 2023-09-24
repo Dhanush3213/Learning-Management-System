@@ -1,6 +1,31 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import {useState,useEffect} from 'react';
+
+const baseUrl="http://127.0.0.1:8000/api";
+
 export default function TeacherDetail() {
+const [courseData,setcourseData]=useState([]);
+const [teacherData,setteacherData]=useState([]);
+const [skillListData,setskillListData]=useState([]);
+
+
+const {teacher_id}=useParams();
+useEffect(() => {
+        try {
+          axios.get(`${baseUrl}/teacher/${teacher_id}`).then((response) => {
+            console.log(response.data);
+            setteacherData(response.data);
+            setcourseData(response.data.teacher_courses);
+            setskillListData(response.data.skill_list);
+
+          });
+        } catch (e) {
+          console.log(e);
+        }
+      }, []);
   return (
     <div className='container mt-3'>
     <div className='row'>
@@ -8,9 +33,13 @@ export default function TeacherDetail() {
         <img src="/logo512.png" className="img-thumbnail" alt="..."/>
         </div>
         <div className='col-8'>
-            <h3>Teacher Name</h3>
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-       <p className='fw-bold'>Skills:<Link to="/category/php">PHP</Link></p>
+            <h3>{teacherData.full_name}</h3>
+            <p> {teacherData.detail} </p>
+       <p className='fw-bold'>Skills:    
+        {skillListData.map((skill_list,index)=>
+          <Link to={`/teacher-skill-courses/${skill_list.trim()}/${teacherData.id}`}> <span key={index} className=' badge bg-warning ms-2'>{skill_list}</span></Link>
+           )}
+           </p>
        <p className='fw-bold'>Recent course:<a href="#">Reactjs course</a></p>
 
        <p className='fw-bold'>Rating:<a href="#">4/5</a></p>
@@ -24,27 +53,15 @@ export default function TeacherDetail() {
 <h3>Course List</h3>
 </div>
 <ul className="list-group list-group-flush">
-<li className="list-group-item"><Link to="/detail/1">   Course 1 
+        {courseData.map((course,index)=>
+<li className="list-group-item"><Link to={`/detail/${course.id}`}>  {course.title} 
         <span className='float-end'>
                 <span className='me-4'>1 hour 30 Minutes</span>
                 <button className='btn btn-sm btn-danger float-end'><i className="bi bi-play-fill"></i>Play</button>
         </span>
         </Link>
 </li>
-<li className="list-group-item"><Link to="/detail/1">   Course 2 
-        <span className='float-end'>
-                <span className='me-4'>1 hour 30 Minutes</span>
-                <button className='btn btn-sm btn-danger float-end'><i className="bi bi-play-fill"></i>Play</button>
-        </span>
-        </Link>
-</li>
-<li className="list-group-item"><Link to="/detail/1">   Course 3 
-        <span className='float-end'>
-                <span className='me-4'>1 hour 30 Minutes</span>
-                <button className='btn btn-sm btn-danger float-end'><i className="bi bi-play-fill"></i>Play</button>
-        </span>
-        </Link>
-</li>
+)}
 </ul>
 </div>
     </div>
